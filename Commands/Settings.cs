@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace opti.Commands
+namespace chub.Commands
 {
     public class Settings : CommandSettings
     {

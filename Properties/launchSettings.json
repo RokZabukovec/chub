@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "opti": {
+    "chub": {
       "commandName": "Project",
       "commandLineArgs": "search"
     }

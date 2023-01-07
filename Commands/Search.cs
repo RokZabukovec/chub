@@ -2,14 +2,14 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using opti.Dtos;
-using opti.Exceptions;
-using opti.Responses;
-using opti.Services;
+using chub.Responses;
+using chub.Services;
+using chub.Dtos;
+using chub.Exceptions;
 using Spectre.Cli;
 using Spectre.Console;
 
-namespace opti.Commands;
+namespace chub.Commands;
 
 public class Search  : AsyncCommand<Settings>
 {
@@ -29,7 +29,7 @@ public class Search  : AsyncCommand<Settings>
         }
         catch (Exception e)
         {
-            Console.WriteLine("You are not logged in yet. Run opti --help.");
+            Console.WriteLine("You are not logged in yet. Run chub --help.");
             return 0;
         }
         
@@ -47,7 +47,7 @@ public class Search  : AsyncCommand<Settings>
             .StartAsync(Emoji.Replace($"{Emoji.Known.LightBulb} [yellow]Thinking...[/]"), async ctx =>
             {
                 results = await _commandService.Search(query);
-                Thread.Sleep(800);
+                Thread.Sleep(300);
                 return 0;
             });
         

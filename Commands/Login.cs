@@ -1,8 +1,8 @@
-﻿using opti.Requests;
-using opti.Services;
+﻿using chub.Requests;
+using chub.Services;
 using Spectre.Cli;
 
-namespace opti.Commands
+namespace chub.Commands
 {
     internal class Login : AsyncCommand<Settings>
     {
@@ -16,7 +16,7 @@ namespace opti.Commands
             _login = login;
         }
 
-        public async override Task<int> ExecuteAsync(CommandContext context, Settings settings)
+        public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
         {
             var login = await _login.Login();
             var query = settings.Query;
@@ -25,8 +25,6 @@ namespace opti.Commands
                 Console.WriteLine("[red]Search query is empty.[/]");
                 return 0;
             }
-            Console.WriteLine($"Searching for {query}");
-
             return 0;
         }
     }

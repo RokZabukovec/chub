@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using opti.Dtos;
-using opti.Models;
+﻿using chub.Dtos;
+using chub.Models;
 
-namespace opti.Services
+namespace chub.Services
 {
     public interface IAuthentication
     {
         User AskForCredentials();
-        DirectoryInfo CreateCredentialsDirectory();
-        FileStream CreateCredentialsFile(string filePath);
-        bool PersistCredentials(UserDto user);
+        bool PersistCredentials(User user);
         public UserDto? ReadUserCredentials();
     }
 }

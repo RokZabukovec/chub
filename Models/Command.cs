@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace opti.Models;
+namespace chub.Models;
 
 public class Command
 {

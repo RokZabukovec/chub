@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace opti.Data
+namespace chub.Data
 {
     public class Config
     {

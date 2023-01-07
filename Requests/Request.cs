@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using opti.Services;
+using chub.Services;
 
-namespace opti.Requests
+namespace chub.Requests
 {
     internal class Request
     {

@@ -1,7 +1,7 @@
-using opti.Models;
-using opti.Responses;
+using chub.Models;
+using chub.Responses;
 
-namespace opti.Services;
+namespace chub.Services;
 
 public interface ISearchService
 {

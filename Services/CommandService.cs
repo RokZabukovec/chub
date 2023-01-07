@@ -1,13 +1,13 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using opti.Requests;
+using chub.Models;
+using chub.Responses;
+using chub.Requests;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using opti.Models;
-using opti.Responses;
 using Spectre.Console;
 
-namespace opti.Services;
+namespace chub.Services;
 
 public class CommandService : ISearchService
 {
@@ -28,7 +28,8 @@ public class CommandService : ISearchService
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {user.Token}");
         client.BaseAddress = new Uri(_config.GetValue<string>("BaseUrl"));
         
-        var response = await client.GetAsync($"/api/console/commands?search={query}");
+        var response = await client.GetAsync($"api/search?q={query}");
+        
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<CommandResponse>(responseBody);
@@ -37,7 +38,7 @@ public class CommandService : ISearchService
     public string ShowCommandSelectList(IEnumerable<Command> commands)
     {
         var commandNames = commands.Select(command => command.Name).ToList();
-        Console.Title = $"opti found {commandNames.Count} results.";
+        Console.Title = $"chub found {commandNames.Count} results.";
         var command = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[green]These are the results:[/]")

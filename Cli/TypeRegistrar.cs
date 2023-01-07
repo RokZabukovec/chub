@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace opti.Cli
+namespace chub.Cli
 {
     internal class TypeRegistrar : ITypeRegistrar
     {

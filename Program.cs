@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using chub.Requests;
+using chub.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using opti.Requests;
-using opti.Services;
 using Serilog;
 
 
-namespace opti
+namespace chub
 {
     public class Program
     {
@@ -24,9 +24,12 @@ namespace opti
         {
             try
             {
+                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
                 Configuration = new ConfigurationBuilder()
                                         .SetBasePath(Directory.GetCurrentDirectory())
                                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                        .AddJsonFile($"appsettings.{environmentName}.json", true, true)
                                         .AddEnvironmentVariables()
                                         .Build();
 

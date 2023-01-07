@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using opti.Cli;
-using opti.Commands;
+﻿using chub.Cli;
+using chub.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Cli;
 using Spectre.Console;
 
-namespace opti
+namespace chub
 {
     public class Application
     {
@@ -12,7 +12,7 @@ namespace opti
         {
             if (args.Length == 0)
             {
-                AnsiConsole.Write(new FigletText("opti")
+                AnsiConsole.Write(new FigletText("CommandHub")
                     .LeftAligned()
                     .Color(Color.Blue));
             }
@@ -24,8 +24,7 @@ namespace opti
             app.Configure(config =>
             {
                 config.AddCommand<Login>("login")
-                    .WithDescription("Login with Lina account.");
-                
+                    .WithDescription("Login with CommandHub token.");
                 config.AddCommand<Search>("search")
                     .WithDescription("Search for commands.");
             });

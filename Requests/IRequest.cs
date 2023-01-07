@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace opti.Requests
+namespace chub.Requests
 {
     public interface IRequest
     {

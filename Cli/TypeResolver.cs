@@ -1,6 +1,6 @@
 ﻿using Spectre.Cli;
 
-namespace opti.Cli
+namespace chub.Cli
 {
     internal class TypeResolver : ITypeResolver
     {

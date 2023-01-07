@@ -1,40 +1,31 @@
 ﻿using Newtonsoft.Json;
 using Spectre.Console;
 using System.Text;
-using opti.Dtos;
-using opti.Exceptions;
-using opti.Models;
+using chub.Dtos;
+using chub.Exceptions;
+using chub.Models;
 
-namespace opti.Services
+namespace chub.Services
 {
     public class Authentication : IAuthentication
     {
-        private string AskForEmail()
+        private string AskForToken()
         {
             return AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter [green]email[/]?")
+                new TextPrompt<string>("Enter [green]API token[/]?")
                 .PromptStyle("green"));
-        }
-
-        private string AskForPassword()
-        {
-            return AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter [green]password[/]?")
-                .PromptStyle("red")
-                .Secret());
         }
 
         public User AskForCredentials()
         {
             var user = new User();
-            user.Email = AskForEmail();
-            user.Password = AskForPassword();
+            user.Token = AskForToken();
             return user;
         }
 
         public DirectoryInfo CreateCredentialsDirectory()
         {
-            var dirName = ".opti";
+            var dirName = ".chub";
             var userLocation = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var location = Path.Combine(userLocation, dirName);
             if (!Directory.Exists(location))
@@ -53,13 +44,16 @@ namespace opti.Services
                     byte[] info = new UTF8Encoding(true).GetBytes("");
                     fs.Write(info, 0, info.Length);
                 }
+
             }
         }
 
-        public bool PersistCredentials(UserDto user)
+        public bool PersistCredentials(User user)
         {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            
             var dir = CreateCredentialsDirectory();
-            var filePath = Path.Combine(dir.ToString(), "opti.json");
+            var filePath = Path.Combine(dir.ToString(), "brainwallet.json");
             using (FileStream fs = File.Create(filePath))
             {
                 try
@@ -80,23 +74,17 @@ namespace opti.Services
         public UserDto ReadUserCredentials()
         {
             var dir = CreateCredentialsDirectory();
-            var filePath = Path.Combine(dir.ToString(), "opti.json");
+            var filePath = Path.Combine(dir.ToString(), "brainwallet.json");
 
             if (File.Exists(filePath) == false)
             {
                 throw new UnauthorizedException();
             }
             // deserialize JSON directly from a file
-            using (StreamReader file = File.OpenText(filePath))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                return serializer.Deserialize(file, typeof(UserDto)) as UserDto;
-            }
+            using StreamReader file = File.OpenText(filePath);
+            JsonSerializer serializer = new JsonSerializer();
+            return serializer.Deserialize(file, typeof(UserDto)) as UserDto;
         }
-
-        FileStream IAuthentication.CreateCredentialsFile(string filePath)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

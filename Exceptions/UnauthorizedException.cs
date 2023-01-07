@@ -1,4 +1,4 @@
-namespace opti.Exceptions;
+namespace chub.Exceptions;
 
 public class UnauthorizedException : Exception
 {

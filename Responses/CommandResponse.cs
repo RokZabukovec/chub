@@ -1,6 +1,6 @@
-using opti.Models;
+using chub.Models;
 
-namespace opti.Responses;
+namespace chub.Responses;
 
 public class CommandResponse
 {
