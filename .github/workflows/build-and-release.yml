@@ -8,19 +8,25 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Install .NET 6.0
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '6.0.x'
-
-    - name: Build, Tests, Cover, Pack and Publish (on push tag)
-      shell: bash
+    - name: Build and package application
       run: |
-        dotnet tool install --global dotnet-releaser
-        dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" src/dotnet-releaser.toml
-    
+        dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
+        dotnet publish -c Release -r osx-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
+        dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
+    - name: Generate tag name
+      id: tag
+      run: echo "::set-output name=tag::$(date +'%Y%m%d-%H%M%S')-${GITHUB_SHA::7}"
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          bin/Release/net6.0/win-x64/app.exe
+          bin/Release/net6.0/osx-x64/app
+          bin/Release/net6.0/linux-x64/app
+        tag_name: ${{ steps.tag.outputs.tag }}
+        title: Release ${{ steps.tag.outputs.tag }}
+        draft: false
+        prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}
