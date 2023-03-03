@@ -1,4 +1,5 @@
-﻿using Spectre.Cli;
+﻿using System;
+using Spectre.Cli;
 
 namespace chub.Cli
 {

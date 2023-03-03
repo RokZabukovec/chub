@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using chub.Services;
@@ -18,7 +19,7 @@ namespace chub.Requests
         public Request(HttpClient client, IConfiguration config, IAuthentication Authentication)
         {
             Client = client;
-            Client.BaseAddress = new Uri(Config.GetValue<string>("BaseUrl"));
+            Client.BaseAddress = new Uri("https://command-hub.si");
         }
     }
 }

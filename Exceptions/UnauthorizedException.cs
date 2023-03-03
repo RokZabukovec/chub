@@ -1,3 +1,5 @@
+using System;
+
 namespace chub.Exceptions;
 
 public class UnauthorizedException : Exception

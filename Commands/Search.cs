@@ -1,11 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using chub.Responses;
 using chub.Services;
-using chub.Dtos;
-using chub.Exceptions;
 using Spectre.Cli;
 using Spectre.Console;
 
@@ -61,7 +60,10 @@ public class Search  : AsyncCommand<Settings>
                 var description = commands
                     .FirstOrDefault(command => command.Name == selectedCommand)
                     ?.Description;
-                AnsiConsole.Markup($"[black on yellow]\n\n{description}\n\n[/]");
+                if (string.IsNullOrEmpty(description) == false)
+                {
+                    AnsiConsole.Markup(string.Format("[black on yellow]\n\n{0}\n\n[/]", description ?? ""));
+                }
                 var commandWithReplacedPlaceholders = _commandService.ReplaceParameters(selectedCommand);
                 if (AnsiConsole.Confirm("Run command?"))
                 {
@@ -72,7 +74,6 @@ public class Search  : AsyncCommand<Settings>
                 }
                 Console.Clear();
             }
-            return 0;
         }
         Console.WriteLine("No results returned.");
         return 0;

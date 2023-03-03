@@ -1,0 +1,53 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create release branch
+      uses: peter-evans/create-pull-request@v3
+      with:
+        branch: release/0.1.0
+        commit-message: 'Create release branch'
+        title: 'Create release branch'
+        body: 'Create release branch for version 0.1.0'
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and package application
+      run: |
+        dotnet publish -c Release -r win-x64
+        dotnet publish -c Release -r osx-x64
+        dotnet publish -c Release -r linux-x64
+    - name: Create zip files for Windows
+      uses: joshuawootonn/zip-directory@v1
+      with:
+        path: bin/Release/net6.0/win-x64/publish
+        name: app-win-x64.zip
+    - name: Create zip files for macOS
+      uses: joshuawootonn/zip-directory@v1
+      with:
+        path: bin/Release/net6.0/osx-x64/publish
+        name: app-osx-x64.zip
+    - name: Create zip files for Linux
+      uses: joshuawootonn/zip-directory@v1
+      with:
+        path: bin/Release/net6.0/linux-x64/publish
+        name: app-linux-x64.zip
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          app-win-x64.zip
+          app-osx-x64.zip
+          app-linux-x64.zip
+        tag_name: 0.1.0
+        title: Release 0.1.0
+        body: 'Initial release'
+        draft: false
+        prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using chub.Models;
 using chub.Responses;
-using chub.Requests;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Spectre.Console;
@@ -34,7 +38,7 @@ public class CommandService : ISearchService
         string responseBody = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<CommandResponse>(responseBody);
     }
-    
+
     public string ShowCommandSelectList(IEnumerable<Command> commands)
     {
         var commandNames = commands.Select(command => command.Name).ToList();

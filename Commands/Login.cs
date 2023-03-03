@@ -1,4 +1,6 @@
-﻿using chub.Requests;
+﻿using System;
+using System.Threading.Tasks;
+using chub.Requests;
 using chub.Services;
 using Spectre.Cli;
 
