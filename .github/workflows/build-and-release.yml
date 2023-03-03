@@ -16,9 +16,9 @@ jobs:
         dotnet-version: '6.0.x'
     - name: Build and package application
       run: |
-        dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
-        dotnet publish -c Release -r osx-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
-        dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
+        dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true /p:EnableCompressionInSingleFile=true
+        dotnet publish -c Release -r osx-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true /p:EnableCompressionInSingleFile=true
+        dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true /p:EnableCompressionInSingleFile=true
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
