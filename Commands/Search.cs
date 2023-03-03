@@ -20,13 +20,14 @@ public class Search  : AsyncCommand<Settings>
         _commandService = commandService;
         _auth = authentication;
     }
+    
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         try
         {
            _auth.ReadUserCredentials();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Console.WriteLine("You are not logged in yet. Run chub --help.");
             return 0;

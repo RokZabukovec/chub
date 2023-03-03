@@ -10,23 +10,37 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
     - name: Build and package application
       run: |
         dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
         dotnet publish -c Release -r osx-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
         dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true
-    - name: Generate tag name
-      id: tag
-      run: echo "::set-output name=tag::$(date +'%Y%m%d-%H%M%S')-${GITHUB_SHA::7}"
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          bin/Release/net6.0/win-x64/app.exe
-          bin/Release/net6.0/osx-x64/app
-          bin/Release/net6.0/linux-x64/app
-        tag_name: ${{ steps.tag.outputs.tag }}
-        title: Release ${{ steps.tag.outputs.tag }}
+          bin/Release/net6.0/win-x64/chub.exe
+          bin/Release/net6.0/osx-x64/chub
+          bin/Release/net6.0/linux-x64/chub
+        tag_name: v${{ env.VERSION }}
+        title: Release v${{ env.VERSION }}
+        body: 'Release version v${{ env.VERSION }}'
         draft: false
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Set version
+      id: set-version
+      run: echo "::set-output name=VERSION::$(git describe --tags --abbrev=0)"
+    - name: Bump version
+      id: bump-version
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        draft: false
+        prerelease: false
+        skip_draft: true
+        skip_prerelease: true
