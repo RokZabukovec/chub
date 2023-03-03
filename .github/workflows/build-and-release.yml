@@ -27,11 +27,10 @@ jobs:
           bin/Release/net6.0/osx-x64/chub
           bin/Release/net6.0/linux-x64/chub
         tag_name: v${{ env.VERSION }}
-        title: Release v${{ env.VERSION }}
         body: 'Release version v${{ env.VERSION }}'
         draft: false
         prerelease: false
-        token: ${{ secrets.PUBLISH_RELEASE }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Set version
       id: set-version
       run: echo "::set-output name=VERSION::$(git describe --tags --abbrev=0)"
@@ -39,7 +38,7 @@ jobs:
       id: bump-version
       uses: marvinpinto/action-automatic-releases@latest
       with:
-        repo_token: ${{ secrets.PUBLISH_RELEASE }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
         draft: false
         prerelease: false
         skip_draft: true
