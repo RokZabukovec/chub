@@ -31,7 +31,7 @@ jobs:
         body: 'Release version v${{ env.VERSION }}'
         draft: false
         prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PUBLISH_RELEASE }}
     - name: Set version
       id: set-version
       run: echo "::set-output name=VERSION::$(git describe --tags --abbrev=0)"
@@ -39,7 +39,7 @@ jobs:
       id: bump-version
       uses: marvinpinto/action-automatic-releases@latest
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: ${{ secrets.PUBLISH_RELEASE }}
         draft: false
         prerelease: false
         skip_draft: true
