@@ -8,31 +8,19 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v2
-    - name: Create release branch
-      uses: peter-evans/create-pull-request@v3
       with:
-        branch: release/0.1.0
-        commit-message: 'Create release branch'
-        title: 'Create release branch'
-        body: 'Create release branch for version 0.1.0'
-        token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and package application
+        fetch-depth: 0
+
+    - name: Install .NET 6.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Build, Tests, Cover, Pack and Publish (on push tag)
+      shell: bash
       run: |
-        dotnet publish -c Release -r win-x64
-        dotnet publish -c Release -r osx-x64
-        dotnet publish -c Release -r linux-x64
-    - name: Create release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          app-win-x64.zip
-          app-osx-x64.zip
-          app-linux-x64.zip
-        tag_name: 0.1.0
-        title: Release 0.1.0
-        body: 'Initial release'
-        draft: false
-        prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+        dotnet tool install --global dotnet-releaser
+        dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" src/dotnet-releaser.toml
+    
