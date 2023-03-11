@@ -3,7 +3,7 @@ using chub.Models;
 
 namespace chub.Responses;
 
-public class CommandResponse
+public class ListResponse<T>
 {
-    public List<Command> Data { get; set; }
+    public List<T> Data { get; set; }
 }

@@ -27,6 +27,7 @@ namespace chub
         {
             try
             {
+                Console.OutputEncoding = System.Text.Encoding.UTF8;
                 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
                 Configuration = new ConfigurationBuilder()
@@ -68,6 +69,7 @@ namespace chub
             IServiceCollection services = new ServiceCollection();
             services.AddSingleton(Configuration);
             services.AddSingleton<IAuthentication, Authentication>();
+            services.AddTransient<IProjectService, ProjectService>();
             services.AddSingleton<CommandService>();
             services.AddTransient<LoginRequest>();
             services.AddOptions();

@@ -1,12 +1,11 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using chub.Responses;
 using chub.Services;
 using Spectre.Cli;
 using Spectre.Console;
+using Command = chub.Models.Command;
 
 namespace chub.Commands;
 
@@ -34,7 +33,7 @@ public class Search  : AsyncCommand<Settings>
         }
         
         Console.Clear();
-        var results = new CommandResponse();
+        var results = new ListResponse<Command>();
         var query = settings.Query;
         if (query == "*")
         {
@@ -47,7 +46,6 @@ public class Search  : AsyncCommand<Settings>
             .StartAsync(Emoji.Replace($"{Emoji.Known.LightBulb} [yellow]Thinking...[/]"), async ctx =>
             {
                 results = await _commandService.Search(query);
-                Thread.Sleep(300);
                 return 0;
             });
         

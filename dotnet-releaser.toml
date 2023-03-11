@@ -1,6 +1,0 @@
-# configuration file for dotnet-releaser
-[msbuild]
-project = "chub"
-[github]
-user = "RokZabukovec"
-repo = "opti"

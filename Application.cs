@@ -27,6 +27,8 @@ namespace chub
                     .WithDescription("Login with CommandHub token.");
                 config.AddCommand<Search>("search")
                     .WithDescription("Search for commands.");
+                config.AddCommand<Save>("save")
+                    .WithDescription("Save the last executed command.");
             });
 
             return app.Run(args);

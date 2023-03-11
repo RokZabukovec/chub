@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using chub.Models;
@@ -23,20 +24,20 @@ public class CommandService : ISearchService
         _config = configuration;
         _auth = authentication;
     }
-    
-    public async Task<CommandResponse> Search(string query)
+
+    public async Task<ListResponse<Command>> Search(string query)
     {
         var user = _auth.ReadUserCredentials();
         var client = new HttpClient();
         client.DefaultRequestHeaders.Add("Accept", "application/json");
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {user.Token}");
         client.BaseAddress = new Uri(_config.GetValue<string>("BaseUrl"));
-        
+
         var response = await client.GetAsync($"api/search?q={query}");
-        
+
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<CommandResponse>(responseBody);
+        return JsonConvert.DeserializeObject<ListResponse<Command>>(responseBody);
     }
 
     public string ShowCommandSelectList(IEnumerable<Command> commands)
@@ -51,22 +52,45 @@ public class CommandService : ISearchService
                 .AddChoices(commandNames));
         return command;
     }
-    
-    public void ExecuteCommand(string command)
+
+    public List<string> ExecuteCommand(string command)
     {
-        Process proc = new Process ();
-        proc.StartInfo.FileName = "/bin/bash";
-        proc.StartInfo.Arguments = "-c \" " + command + " \"";
-        proc.StartInfo.UseShellExecute = false;
-        proc.StartInfo.CreateNoWindow = false;
-        proc.StartInfo.RedirectStandardOutput = true;
-        proc.Start ();
+        var outputLines = new List<string>();
+        string os = Environment.OSVersion.Platform.ToString().ToLower();
+        Process proc = new Process();
 
-        while (!proc.StandardOutput.EndOfStream) {
-            Console.WriteLine (proc.StandardOutput.ReadLine ());
+        if (os.StartsWith("win"))
+        {
+            proc.StartInfo.FileName = "cmd.exe";
+            proc.StartInfo.Arguments = "/c ";
+            proc.StartInfo.Arguments += command; // add command as argument
+
         }
-    }
+        else
+        {
+            proc.StartInfo.FileName = "/bin/bash";
+            proc.StartInfo.Arguments += command;
+        }
 
+        proc.StartInfo.UseShellExecute = false;
+        proc.StartInfo.CreateNoWindow = true;
+        proc.StartInfo.RedirectStandardOutput = true;
+        proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+
+        proc.Start();
+        proc.WaitForExit();
+
+        while (!proc.StandardOutput.EndOfStream)
+        {
+            string line = proc.StandardOutput.ReadLine();
+            Console.WriteLine(line);
+            outputLines.Add(line);
+        }
+
+        return outputLines;
+    }
+    
+    
     public string ReplaceParameters(string command)
     {
         // Matches a string that is between <> and any number of characters.

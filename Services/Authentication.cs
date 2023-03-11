@@ -55,7 +55,7 @@ namespace chub.Services
             if (user == null) throw new ArgumentNullException(nameof(user));
             
             var dir = CreateCredentialsDirectory();
-            var filePath = Path.Combine(dir.ToString(), "brainwallet.json");
+            var filePath = Path.Combine(dir.ToString(), "chub.json");
             using (FileStream fs = File.Create(filePath))
             {
                 try
@@ -67,7 +67,6 @@ namespace chub.Services
                 }
                 catch (Exception)
                 {
-                    // Log
                     return false;
                 }
             }
@@ -76,7 +75,7 @@ namespace chub.Services
         public UserDto ReadUserCredentials()
         {
             var dir = CreateCredentialsDirectory();
-            var filePath = Path.Combine(dir.ToString(), "brainwallet.json");
+            var filePath = Path.Combine(dir.ToString(), "chub.json");
 
             if (File.Exists(filePath) == false)
             {

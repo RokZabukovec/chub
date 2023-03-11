@@ -2,7 +2,7 @@
   "profiles": {
     "chub": {
       "commandName": "Project",
-      "commandLineArgs": "search"
+      "commandLineArgs": "save"
     }
   }
 }

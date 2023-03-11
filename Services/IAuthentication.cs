@@ -7,6 +7,6 @@ namespace chub.Services
     {
         User AskForCredentials();
         bool PersistCredentials(User user);
-        public UserDto? ReadUserCredentials();
+        public UserDto ReadUserCredentials();
     }
 }
