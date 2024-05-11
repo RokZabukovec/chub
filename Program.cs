@@ -15,7 +15,7 @@ namespace chub
         /// <summary>
         ///     Configuration for the application
         /// </summary>
-        public static IConfiguration Configuration { get; private set; }
+        private static IConfiguration Configuration { get; set; }
 
         /// <summary>
         ///     Entry point of the project.
