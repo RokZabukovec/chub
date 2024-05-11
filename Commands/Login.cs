@@ -25,6 +25,7 @@ namespace chub.Commands
             if (string.IsNullOrEmpty(query))
             {
                 Console.WriteLine("[red]Search query is empty.[/]");
+                
                 return 0;
             }
             return 0;

@@ -7,6 +7,6 @@ namespace chub.Services;
 
 public interface ISearchService
 {
-    Task<ListResponse<Command>> Search(string query);
+    Task<IEnumerable<Command>> Search(string query);
     string ShowCommandSelectList(IEnumerable<Command> commands);
 }

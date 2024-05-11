@@ -1,15 +1,8 @@
-﻿using chub.Models;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using chub.Services;
-using chub.Responses;
-using chub.Dtos;
+
 
 namespace chub.Requests
 {
@@ -27,11 +20,22 @@ namespace chub.Requests
 
         public async Task<bool> Login()
         {
-            var user = _auth.AskForCredentials();
+            var userToken = _auth.AskForCredentials();
 
-            var success = _auth.PersistCredentials(user);
+            var actualUser = await _auth.GetUser(userToken.Token);
+
+            if (actualUser is null)
+            {
+                Console.WriteLine($"The token ({userToken.Token}) you provided is not valid.");
+                
+                return false;
+            }
+            
+            var success = _auth.PersistCredentials(userToken);
             if (!success) return false;
+            
             Console.WriteLine("You are now logged in.");
+            
             return true;
 
         }

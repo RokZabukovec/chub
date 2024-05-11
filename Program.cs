@@ -23,12 +23,16 @@ namespace chub
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static async Task Main(string[] args)
+        public static Task Main(string[] args)
         {
             try
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
                 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                if (string.IsNullOrWhiteSpace(environmentName))
+                {
+                    environmentName = "production";
+                }
 
                 Configuration = new ConfigurationBuilder()
                                         .SetBasePath(Directory.GetCurrentDirectory())
@@ -46,7 +50,7 @@ namespace chub
                 // Create service collection and configure our services
                 var services = ConfigureServices();
                 var serviceProvider = services.BuildServiceProvider();
-                var response = serviceProvider.GetService<Application>()?.Run(args, services);
+                serviceProvider.GetService<Application>()?.Run(args, services);
 
                 Log.Information("Shutting down...");
             }
@@ -58,6 +62,8 @@ namespace chub
             {
                 Log.CloseAndFlush();
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

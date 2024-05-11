@@ -1,16 +1,54 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Net.Mime;
 using Newtonsoft.Json;
 using Spectre.Console;
 using System.Text;
+using System.Threading.Tasks;
 using chub.Dtos;
 using chub.Exceptions;
 using chub.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace chub.Services
 {
     public class Authentication : IAuthentication
     {
+        private readonly IConfiguration _configuration;
+
+        public Authentication(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
+        public async Task<UserDto> GetUser(string token)
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Accept", MediaTypeNames.Application.Json);
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                client.BaseAddress = new Uri(_configuration.GetValue<string>("BaseUrl"));
+        
+                var response = await client.GetAsync("/api/user");
+
+                response.EnsureSuccessStatusCode();
+        
+                var responseBody = await response.Content.ReadAsStringAsync();
+        
+                var user = JsonConvert.DeserializeObject<UserDto>(responseBody);
+                user.Token = token;
+
+                return user;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        
         private string AskForToken()
         {
             return AnsiConsole.Prompt(
@@ -20,14 +58,17 @@ namespace chub.Services
 
         public User AskForCredentials()
         {
-            var user = new User();
-            user.Token = AskForToken();
+            var user = new User
+            {
+                Token = AskForToken()
+            };
+
             return user;
         }
 
-        public DirectoryInfo CreateCredentialsDirectory()
+        private DirectoryInfo CreateCredentialsDirectory()
         {
-            var dirName = ".chub";
+            const string dirName = ".chub";
             var userLocation = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var location = Path.Combine(userLocation, dirName);
             if (!Directory.Exists(location))
@@ -81,6 +122,7 @@ namespace chub.Services
             {
                 throw new UnauthorizedException();
             }
+            
             // deserialize JSON directly from a file
             using StreamReader file = File.OpenText(filePath);
             JsonSerializer serializer = new JsonSerializer();

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using chub.Models;
 using chub.Responses;
 using chub.Services;
 using Spectre.Cli;
@@ -33,48 +35,70 @@ public class Search  : AsyncCommand<Settings>
         }
         
         Console.Clear();
-        var results = new ListResponse<Command>();
+        var results = Enumerable.Empty<Command>();
         var query = settings.Query;
         if (query == "*")
         {
             query = AnsiConsole.Ask<string>(Emoji.Replace($"{Emoji.Known.HourglassNotDone} [green]Search for: [/]"));
         }
+        
         await AnsiConsole.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Default)
             .SpinnerStyle(Style.Parse("green bold"))
             .StartAsync(Emoji.Replace($"{Emoji.Known.LightBulb} [yellow]Thinking...[/]"), async ctx =>
             {
-                results = await _commandService.Search(query);
+                results = (await _commandService.Search(query)).ToList();
+                
                 return 0;
             });
-        
-        if (results != null && results.Data.Count > 0)
+
+        var commands = results.ToList();
+
+        if (commands.Count == 0 )
         {
-            bool run = true;
-            while (run)
+            var currentCommand = new Command
             {
-                var commands = results.Data;
-                var selectedCommand = _commandService.ShowCommandSelectList(commands);
-                var description = commands
-                    .FirstOrDefault(command => command.Name == selectedCommand)
-                    ?.Description;
-                if (string.IsNullOrEmpty(description) == false)
-                {
-                    AnsiConsole.Markup(string.Format("[black on yellow]\n\n{0}\n\n[/]", description ?? ""));
-                }
-                var commandWithReplacedPlaceholders = _commandService.ReplaceParameters(selectedCommand);
-                if (AnsiConsole.Confirm("Run command?"))
-                {
-                    Console.Clear();
-                    _commandService.ExecuteCommand(commandWithReplacedPlaceholders);
-                    run = false;
-                    return 0;
-                }
-                Console.Clear();
-            }
+                Name = query,
+                Description = "Currently entered search query can be run if there are no results",
+                Pre = string.Empty
+            };
+            
+            commands.Add(currentCommand);
         }
-        Console.WriteLine("No results returned.");
+        
+        while (true)
+        {
+            var selectedCommand = _commandService.ShowCommandSelectList(commands);
+            var description = commands
+                .FirstOrDefault(command => command.Name == selectedCommand)
+                ?.Description;
+                
+            var pre = commands
+                .FirstOrDefault(command => command.Name == selectedCommand)
+                ?.Pre;
+            if (string.IsNullOrEmpty(description) == false)
+            {
+                AnsiConsole.Markup($"[black on yellow]\n\n{description ?? ""}\n\n[/]");
+            }
+                
+            if (string.IsNullOrEmpty(pre) == false)
+            {
+                AnsiConsole.Write($"{pre} \n");
+            }
+                
+            var commandWithReplacedPlaceholders = CommandService.ReplaceParameters(selectedCommand);
+            if (AnsiConsole.Confirm("Run command?"))
+            {
+                Console.Clear();
+                _commandService.ExecuteCommand(commandWithReplacedPlaceholders);
+                
+                break;
+            }
+                
+            Console.Clear();
+        }
+        
         return 0;
     }
 
