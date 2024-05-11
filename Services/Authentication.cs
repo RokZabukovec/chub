@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Mime;
@@ -66,7 +65,7 @@ namespace chub.Services
             return user;
         }
 
-        private DirectoryInfo CreateCredentialsDirectory()
+        private static DirectoryInfo CreateCredentialsDirectory()
         {
             const string dirName = ".chub";
             var userLocation = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -93,23 +92,21 @@ namespace chub.Services
 
         public bool PersistCredentials(User user)
         {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-            
+            ArgumentNullException.ThrowIfNull(user);
+
             var dir = CreateCredentialsDirectory();
             var filePath = Path.Combine(dir.ToString(), "chub.json");
-            using (FileStream fs = File.Create(filePath))
+            using FileStream fs = File.Create(filePath);
+            try
             {
-                try
-                {
-                    fs.Close();
-                    string json = JsonConvert.SerializeObject(user);
-                    File.WriteAllText(filePath, json);
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                fs.Close();
+                string json = JsonConvert.SerializeObject(user);
+                File.WriteAllText(filePath, json);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -125,7 +122,7 @@ namespace chub.Services
             
             // deserialize JSON directly from a file
             using StreamReader file = File.OpenText(filePath);
-            JsonSerializer serializer = new JsonSerializer();
+            var serializer = new JsonSerializer();
             return serializer.Deserialize(file, typeof(UserDto)) as UserDto;
         }
         

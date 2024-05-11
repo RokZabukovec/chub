@@ -53,38 +53,39 @@ public class CommandService(IConfiguration configuration, IAuthentication authen
 
         if (string.IsNullOrWhiteSpace(command) == false)
         {
+            var path = Environment.GetEnvironmentVariable("PATH");
             var proc = new Process {
                 StartInfo = new ProcessStartInfo {
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
-                    CreateNoWindow = false,
-                    StandardOutputEncoding = Encoding.UTF8
+                    RedirectStandardError = false
                 }
             };
-            var indexOfFirstSpace = command.IndexOf(' ');
-
-            if (indexOfFirstSpace != -1)
+            
+            if (OperatingSystem.IsWindows())
             {
-                var firstWord = command.Substring(0, indexOfFirstSpace);
-                var restOfString = command.Substring(indexOfFirstSpace + 1);
-                proc.StartInfo.FileName = firstWord;
-                proc.StartInfo.Arguments = restOfString;
+                proc.StartInfo.FileName = "cmd.exe"; // Use cmd.exe on Windows
+                proc.StartInfo.Arguments = $"/C \"{command}\""; // Pass the command as an argument to cmd.exe
             }
             else
             {
-                proc.StartInfo.FileName = command;
-                proc.StartInfo.Arguments = string.Empty;
+                proc.StartInfo.FileName = "/bin/bash"; // Use bash on Unix-like systems
+                proc.StartInfo.Arguments = $"-c \"{command}\""; // Pass the command as an argument to bash
             }
             
             proc.Start();
-            proc.WaitForExit();
-
-            while (!proc.StandardOutput.EndOfStream)
+            
+            while (!proc.HasExited)
             {
                 var line = proc.StandardOutput.ReadLine();
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
                 Console.WriteLine(line);
-                outputLines.Add(line);
             }
+
+            //proc.WaitForExit();
 
             return outputLines;
         }

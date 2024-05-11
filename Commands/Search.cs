@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using chub.Models;
-using chub.Responses;
 using chub.Services;
 using Spectre.Cli;
 using Spectre.Console;
@@ -31,6 +28,7 @@ public class Search  : AsyncCommand<Settings>
         catch (Exception)
         {
             Console.WriteLine("You are not logged in yet. Run chub --help.");
+            
             return 0;
         }
         
