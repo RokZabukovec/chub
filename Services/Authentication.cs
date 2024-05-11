@@ -29,7 +29,7 @@ namespace chub.Services
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Accept", MediaTypeNames.Application.Json);
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-                client.BaseAddress = new Uri(_configuration.GetValue<string>("BaseUrl"));
+                client.BaseAddress = new Uri("https://command-hub.si");
         
                 var response = await client.GetAsync("/api/user");
 

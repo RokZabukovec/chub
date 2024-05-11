@@ -24,7 +24,7 @@ public class CommandService(IConfiguration configuration, IAuthentication authen
         
         client.DefaultRequestHeaders.Add("Accept", MediaTypeNames.Application.Json);
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {user.Token}");
-        client.BaseAddress = new Uri(configuration.GetValue<string>("BaseUrl"));
+        client.BaseAddress = new Uri("https://command-hub.si");
         
         var response = await client.GetAsync($"/api/chub?q={query}");
         response.EnsureSuccessStatusCode();

@@ -40,7 +40,7 @@ public class ProjectService : IProjectService
         var client = new HttpClient();
         client.DefaultRequestHeaders.Add("Accept", "application/json");
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {user.Token}");
-        client.BaseAddress = new Uri(_configuration.GetValue<string>("BaseUrl"));
+        client.BaseAddress = new Uri("https://command-hub.si");
 
         var response = await client.GetAsync("api/projects");
 

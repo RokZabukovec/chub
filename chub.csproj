@@ -26,16 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="appsettings.production.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Folder Include="nupkg\" />
+    <Folder Include="obj\Debug\net8.0\linux-x64\" />
+    <Folder Include="out\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="nupkg\" />
+    <None Remove="out\chub" />
   </ItemGroup>
 
 </Project>

@@ -28,16 +28,8 @@ namespace chub
             try
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
-                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                if (string.IsNullOrWhiteSpace(environmentName))
-                {
-                    environmentName = "production";
-                }
-
                 Configuration = new ConfigurationBuilder()
                                         .SetBasePath(Directory.GetCurrentDirectory())
-                                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                                        .AddJsonFile($"appsettings.{environmentName}.json", true, true)
                                         .AddEnvironmentVariables()
                                         .Build();
 
